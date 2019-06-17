@@ -45,7 +45,19 @@ and https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
   </inertial>
 </xacro:macro>
 
-<link name="base_link"/>
+<link name="base_footprint"/>
+
+<link name="base_link">
+   <xacro:default_visual    x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_width}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_collision x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_width}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_width}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
+</link>
+
+<joint name="base_footprint_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
 
 <!-- LINK: link1 -->
 <link name="link1">
@@ -84,7 +96,7 @@ and https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
 <joint name="link2_to_link3" type="continuous">
   <parent link="link2"/>
   <child link="link3"/>
-  <origin xyz="0 0 ${link_length}" rpy="0 ${-PI/2} 0"/>
+  <origin xyz="0 0 ${link_length}" rpy="0 0 0"/>
   <axis xyz = "0 1 0"/>
 </joint>
 
@@ -114,5 +126,60 @@ and https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
   <origin xyz="0 0 ${link_length}" rpy="0 0 0"/>
   <axis xyz = "1 0 0"/>
 </joint>
+
+<transmission name="tran1">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="base_to_link1">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="motor1">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>
+
+<transmission name="tran2">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="link1_to_link2">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="motor2">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>
+
+<transmission name="tran3">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="link2_to_link3">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="motor3">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>
+
+<transmission name="tran4">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="link3_to_link4">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="motor4">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>
+
+<transmission name="tran5">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="link4_to_link5">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="motor5">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>
 
 </robot>
