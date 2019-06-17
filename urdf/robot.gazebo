@@ -12,6 +12,8 @@
   <!--Camera link -->
   <gazebo reference="base_link">
     <material>Gazebo/Black</material>
+    <mu1>1.2</mu1>
+    <mu2>1.2</mu2>
   </gazebo>
 
   <!-- Link2 -->

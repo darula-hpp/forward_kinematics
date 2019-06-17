@@ -12,6 +12,8 @@
 <xacro:property name="density" value="240"/> <!-- density of mild steel-->
 <xacro:property name="link_length" value="0.2"/>
 <xacro:property name="link_width" value="0.05"/>
+<xacro:property name="base_width" value="1"/>
+<xacro:property name="base_height" value="0.2"/>
 <xacro:property name="link_mass" value="${density * link_width * link_width * link_length}"/>
 
 <xacro:macro name="default_visual" params = "x_k y_k z_k x_c y_c z_c">
@@ -48,9 +50,9 @@ and https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
 <link name="base_footprint"/>
 
 <link name="base_link">
-   <xacro:default_visual    x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_width}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
-   <xacro:default_collision x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_width}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
-   <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_width}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
+   <xacro:default_visual    x_k ="${base_width}" y_k ="${base_width}" z_k ="${base_height}" x_c = "0." y_c = "0." z_c = "${base_height}"/>
+   <xacro:default_collision x_k ="${base_width}" y_k ="${base_width}" z_k ="${base_height}" x_c = "0." y_c = "0." z_c = "${base_height}"/>
+   <xacro:default_inertial  x_k ="${base_width}" y_k ="${base_width}" z_k ="${base_height}" x_c = "0." y_c = "0." z_c = "${base_height}" mass="${link_mass}"/>
 </link>
 
 <joint name="base_footprint_joint" type="fixed">
@@ -70,9 +72,9 @@ and https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
 <joint name="base_to_link1" type="continuous">
   <parent link="base_link"/>
   <child link="link1"/>
-  <origin xyz="0 0 0" rpy="0 0 0"/>
+  <origin xyz="0 0 ${base_height}" rpy="0 0 0"/>
   <axis xyz = "0 0 1"/>
-  <dynamics damping="0.7"/>
+    <dynamics damping="0.06"/>
 </joint>
 
 <link name="link2">
@@ -81,12 +83,13 @@ and https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
    <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
 </link>
 
-<joint name="link1_to_link2" type="continuous">
+<joint name="link1_to_link2" type="revolute">
   <parent link="link1"/>
   <child link="link2"/>
   <origin xyz="0 0 ${link_length}" rpy="0 0 0"/>
   <axis xyz = "0 1 0"/>
-  <dynamics damping="0.7"/>
+  <limit effort="30" upper="1.5" lower="-1.5" velocity="1.0"/>
+    <dynamics damping="0.06"/>
 </joint>
 
 <link name="link3">
@@ -95,12 +98,12 @@ and https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
    <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
 </link>
 
-<joint name="link2_to_link3" type="continuous">
+<joint name="link2_to_link3" type="revolute">
   <parent link="link2"/>
   <child link="link3"/>
   <origin xyz="0 0 ${link_length}" rpy="0 0 0"/>
   <axis xyz = "0 1 0"/>
-  <dynamics damping="0.7"/>
+  <limit effort="30" upper="1.5" lower="-1.5" velocity="1.0"/>
 </joint>
 
 <link name="link4">
@@ -109,12 +112,12 @@ and https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
    <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
 </link>
 
-<joint name="link3_to_link4" type="continuous">
+<joint name="link3_to_link4" type="revolute">
   <parent link="link3"/>
   <child link="link4"/>
   <origin xyz="0 0 ${link_length}" rpy="0 0 0"/>
   <axis xyz = "0 1 0"/>
-  <dynamics damping="0.7"/>
+  <limit effort="30" upper="1.5" lower="-1.5" velocity="1.0"/>
 </joint>
 
 
@@ -124,12 +127,13 @@ and https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
    <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
 </link>
 
-<joint name="link4_to_link5" type="continuous">
+<joint name="link4_to_link5" type="revolute">
   <parent link="link4"/>
   <child link="link5"/>
   <origin xyz="0 0 ${link_length}" rpy="0 0 0"/>
   <axis xyz = "1 0 0"/>
-  <dynamics damping="0.7"/>
+  <limit effort="30" upper="1.5" lower="-1.5" velocity="1.0"/>
+  <dynamics damping="0.06"/>
 </joint>
 
 <transmission name="tran1">
