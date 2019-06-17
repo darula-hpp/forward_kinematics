@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+ 	xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+    	xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+    	xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+	name="model">
+<!-- Import all Gazebo-customization elements, including Gazebo colors -->
+<xacro:include filename="$(find forward_kinematics)/urdf/robot.gazebo" />
+<!-- The Constants for the robot dims-->
+
+<xacro:property name="PI" value="3.1415926535897931"/>
+<xacro:property name="density" value="240"/> <!-- density of mild steel-->
+<xacro:property name="link_length" value="0.2"/>
+<xacro:property name="link_width" value="0.05"/>
+<xacro:property name="link_mass" value="${density * link_width * link_width * link_length}"/>
+
+<xacro:macro name="default_visual" params = "x_k y_k z_k x_c y_c z_c">
+  <visual>
+    <geometry>
+      <box size=  "${x_k}   ${y_k}   ${z_k}"/>
+    </geometry>
+    <origin xyz = "${x_c/2} ${y_c/2} ${z_c/2} " rpy="0 0 0"/>
+  </visual>
+</xacro:macro>
+
+<xacro:macro name="default_collision" params = "x_k y_k z_k x_c y_c z_c">
+  <collision>
+    <geometry>
+      <box size=  "${x_k}   ${y_k}   ${z_k}"/>
+    </geometry>
+    <origin xyz = "${x_c/2} ${y_c/2} ${z_c/2} " rpy="0 0 0"/>
+  </collision>
+</xacro:macro>
+
+<xacro:macro name="default_inertial" params="mass x_k y_k z_k x_c y_c z_c">
+<!-- https://en.wikipedia.org/wiki/Moment_of_inertia  
+and https://en.wikipedia.org/wiki/List_of_moments_of_inertia -->
+  <inertial>
+    <origin xyz = "${x_c/2} ${y_c/2} ${z_c/2}" rpy="0 0 0"/>
+    <mass value="${mass}"/>
+    <inertia
+    ixx="${mass / 12.0 * (y_k * y_k + z_k * z_k)}" ixy="0.0" ixz="0.0"
+    iyy="${mass / 12.0 * (x_k * x_k + z_k * z_k)}" iyz="0.0"
+    izz="${mass / 12.0 * (x_k * x_k + y_k * y_k)}"/>
+  </inertial>
+</xacro:macro>
+
+<link name="base_link"/>
+
+<!-- LINK: link1 -->
+<link name="link1">
+   <xacro:default_visual    x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_collision x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
+</link>
+
+<!-- base joint; joint then link-->
+<joint name="base_to_link1" type="continuous">
+  <parent link="base_link"/>
+  <child link="link1"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+  <axis xyz = "0 0 1"/>
+</joint>
+
+<link name="link2">
+   <xacro:default_visual    x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_collision x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
+</link>
+
+<joint name="link1_to_link2" type="continuous">
+  <parent link="link1"/>
+  <child link="link2"/>
+  <origin xyz="0 0 ${link_length}" rpy="0 0 0"/>
+  <axis xyz = "0 1 0"/>
+</joint>
+
+<link name="link3">
+   <xacro:default_visual    x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_collision x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
+</link>
+
+<joint name="link2_to_link3" type="continuous">
+  <parent link="link2"/>
+  <child link="link3"/>
+  <origin xyz="0 0 ${link_length}" rpy="0 ${-PI/2} 0"/>
+  <axis xyz = "0 1 0"/>
+</joint>
+
+<link name="link4">
+   <xacro:default_visual    x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_collision x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
+</link>
+
+<joint name="link3_to_link4" type="continuous">
+  <parent link="link3"/>
+  <child link="link4"/>
+  <origin xyz="0 0 ${link_length}" rpy="0 0 0"/>
+  <axis xyz = "0 1 0"/>
+</joint>
+
+
+<link name="link5">
+   <xacro:default_visual    x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_collision x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}"/>
+   <xacro:default_inertial  x_k ="${link_width}" y_k ="${link_width}" z_k ="${link_length}" x_c = "0." y_c = "0." z_c = "${link_length}" mass="${link_mass}"/>
+</link>
+
+<joint name="link4_to_link5" type="continuous">
+  <parent link="link4"/>
+  <child link="link5"/>
+  <origin xyz="0 0 ${link_length}" rpy="0 0 0"/>
+  <axis xyz = "1 0 0"/>
+</joint>
+
+</robot>
