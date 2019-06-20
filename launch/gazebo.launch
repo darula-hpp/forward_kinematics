@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+  <include file="$(find forward_kinematics)/launch/robot_world.launch">
+    
+	</include>
+  <node
+    name="tf_footprint_base"
+    pkg="tf"
+    type="static_transform_publisher"
+    args="0 0 0 0 0 0 base_link base_footprint 40" />
+
+  
+<!-- Load the URDF into the ROS Parameter Server -->
+  <arg name="model" default="model.xacro"/>
+  <param name="robot_description" 
+	 command="$(find xacro)/xacro $(find forward_kinematics)/urdf/$(arg model)" />
+
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+
+args="-urdf -model static_bot -param robot_description -z 0. -y 0."/>
+
+  <node
+    name="fake_joint_calibration"
+    pkg="rostopic"
+    type="rostopic"
+    args="pub /calibrated std_msgs/Bool true" />
+</launch>
