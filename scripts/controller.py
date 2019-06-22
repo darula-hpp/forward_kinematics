@@ -9,6 +9,7 @@ class Controller:
         ## Robot has 5 joints
         self.link_length = 0.2
         self.rate = rospy.Rate(10) # 10hz
+        self.publisher = [None] * 5
         _0T1 = np.zeros((4, 4))
         _1T2 = np.zeros((4, 4))
         _2T3 = np.zeros((4, 4))
@@ -17,7 +18,6 @@ class Controller:
         q_desired = np.full((5, 1), math.pi/6)
 
         for i in range(1, 6):
-            self.publisher = [None] * 5
             print(i)
             self.publisher[i-1] = rospy.Publisher('/custom_pos/joint' + str(i-1)  + '_position_controller/command', Float64, queue_size=1)
 
@@ -26,7 +26,6 @@ class Controller:
         while not rospy.is_shutdown():
             self.rate.sleep()
             self.publisher[4].publish(0.5)
-            print(self.publisher)
 
 
 
